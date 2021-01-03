@@ -91,12 +91,52 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		F592C7AD25A0FDB60023A665 /* Domain */ = {
+		F53BEAE625A23B2D00179AA3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F592C7B725A102370023A665 /* AccountModel.swift */,
+				F53BEAD825A2385400179AA3 /* Model.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		F53BEAE725A23B4500179AA3 /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
 				F592C7B425A0FEF70023A665 /* AddAccount.swift */,
-				F592C7B725A102370023A665 /* AccountModel.swift */,
-				F53BEAD825A2385400179AA3 /* Model.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
+		F53BEAEA25A23B8900179AA3 /* Http */ = {
+			isa = PBXGroup;
+			children = (
+				F53BEADE25A239AA00179AA3 /* HttpPostClient.swift */,
+			);
+			path = Http;
+			sourceTree = "<group>";
+		};
+		F53BEAEB25A23B9300179AA3 /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				F53BEAE225A239F400179AA3 /* RemoteAddAccount.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
+		F53BEAF025A23BB900179AA3 /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				F592C7CC25A104AC0023A665 /* RemoteAddAccountTests.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
+		F592C7AD25A0FDB60023A665 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				F53BEAE725A23B4500179AA3 /* UseCases */,
+				F53BEAE625A23B2D00179AA3 /* Model */,
 				F592C7AF25A0FDB60023A665 /* Info.plist */,
 			);
 			path = Domain;
@@ -105,8 +145,8 @@
 		F592C7C025A104AB0023A665 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				F53BEADE25A239AA00179AA3 /* HttpPostClient.swift */,
-				F53BEAE225A239F400179AA3 /* RemoteAddAccount.swift */,
+				F53BEAEA25A23B8900179AA3 /* Http */,
+				F53BEAEB25A23B9300179AA3 /* UseCases */,
 				F592C7C225A104AB0023A665 /* Info.plist */,
 			);
 			path = Data;
@@ -115,7 +155,7 @@
 		F592C7CB25A104AC0023A665 /* DataTests */ = {
 			isa = PBXGroup;
 			children = (
-				F592C7CC25A104AC0023A665 /* RemoteAddAccountTests.swift */,
+				F53BEAF025A23BB900179AA3 /* UseCases */,
 				F592C7CE25A104AC0023A665 /* Info.plist */,
 			);
 			path = DataTests;
