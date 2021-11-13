@@ -28,18 +28,38 @@ class RemoteAddAccountTests: XCTestCase {
         XCTAssertEqual(httpClientSpy.data, addAccountModel.toData())
     }
     
-    func test_add_should_complete_with_error_if_client_fails() {
+    func test_add_should_complete_with_error_if_client_completes_with_error() {
         let addAccountModel = makeAddAccountModel()
         let (sut,httpClientSpy) = makeSut()
         let exp = expectation(description: "waiting") //usado em casos de testes assíncronos
-        sut.add(addAccountModel: addAccountModel) { error in
-            XCTAssertEqual(error, .unexpected)
+        sut.add(addAccountModel: addAccountModel) { result in
+            switch result {
+            case .failure(let error): XCTAssertEqual(error, .unexpected)
+            case .success: XCTFail("Expected error received \(result) instead")
+            }
             exp.fulfill()
         }
         httpClientSpy.completeWithError(.noConnectivity) // O completion do SUT só irá ser chamado quando o completion do http devolver o erro
         wait(for: [exp], timeout: 1)
     }
+    
+    func test_add_should_complete_with_account_if_client_completes_with_data() {
+        let addAccountModel = makeAddAccountModel()
+        let expectedAccount = makeAccountModel()
+        let (sut,httpClientSpy) = makeSut()
+        let exp = expectation(description: "waiting")
+        sut.add(addAccountModel: addAccountModel) { result in
+            switch result {
+            case .failure: XCTFail("Expected success received \(result) instead")
+            case .success(let receivedAccount): XCTAssertEqual(receivedAccount, expectedAccount)
+            }
+            exp.fulfill()
+        }
+        httpClientSpy.completeWithData(expectedAccount.toData()!)
+        wait(for: [exp], timeout: 1)
+    }
 }
+
 
 extension RemoteAddAccountTests {
     
@@ -52,21 +72,30 @@ extension RemoteAddAccountTests {
     func makeAddAccountModel() -> AddAccountModel {
         return AddAccountModel(name: "any_name", email: "any_email@mail.com", password: "any_password", passwordConfirmation: "any_password")
     }
-   
+    
+    func makeAccountModel() -> AccountModel {
+        return AccountModel(id: "any_id", name: "any_name", email: "any_email@mail.com", password: "any_password")
+    }
+    
     class HttpClientSpy: HttpPostClientProtocol {
-
+        
         var urls = [URL]() //Isso fara com que no teste seja checado o conteúdo de url e a quantidade, então se o método for chamado + de 1 vez, irá falhar
         var data: Data?
-        var completion: ((HttpError) -> Void)?
+        var completion: ((Result<Data,HttpError>) -> Void)?
         
-        func post(to url: URL, with data: Data?, completion: @escaping (HttpError) -> Void) {
+        func post(to url: URL, with data: Data?, completion: @escaping (Result<Data,HttpError>) -> Void) {
             self.urls.append(url)
             self.data = data
             self.completion = completion
         }
         
         func completeWithError(_ error: HttpError) {
-            self.completion?(error)        }
+            completion?(.failure(error))
+        }
+        
+        func completeWithData(_ data: Data) {
+            completion?(.success(data))
+        }
     }
 }
 

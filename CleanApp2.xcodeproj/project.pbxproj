@@ -18,6 +18,7 @@
 		F5F52266274065B3005F92F1 /* HttpPostClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F52265274065B3005F92F1 /* HttpPostClientProtocol.swift */; };
 		F5F5226E274077B2005F92F1 /* DomainError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F5226D274077B2005F92F1 /* DomainError.swift */; };
 		F5F5227027407A3B005F92F1 /* HttpError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F5226F27407A3B005F92F1 /* HttpError.swift */; };
+		F5F5227327408745005F92F1 /* Ext+helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F5227227408745005F92F1 /* Ext+helpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		F5F52265274065B3005F92F1 /* HttpPostClientProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpPostClientProtocol.swift; sourceTree = "<group>"; };
 		F5F5226D274077B2005F92F1 /* DomainError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainError.swift; sourceTree = "<group>"; };
 		F5F5226F27407A3B005F92F1 /* HttpError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpError.swift; sourceTree = "<group>"; };
+		F5F5227227408745005F92F1 /* Ext+helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ext+helpers.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +128,7 @@
 		F5F5224727404DE9005F92F1 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				F5F5227127408717005F92F1 /* Helpers */,
 				F5F52269274066C9005F92F1 /* UseCases */,
 				F5F5226A274066D6005F92F1 /* Http */,
 			);
@@ -195,6 +198,14 @@
 				F5F5226D274077B2005F92F1 /* DomainError.swift */,
 			);
 			path = Errors;
+			sourceTree = "<group>";
+		};
+		F5F5227127408717005F92F1 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				F5F5227227408745005F92F1 /* Ext+helpers.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -359,6 +370,7 @@
 				F5F52266274065B3005F92F1 /* HttpPostClientProtocol.swift in Sources */,
 				F5F5227027407A3B005F92F1 /* HttpError.swift in Sources */,
 				F5F5226427406561005F92F1 /* RemoteAddAccount.swift in Sources */,
+				F5F5227327408745005F92F1 /* Ext+helpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
