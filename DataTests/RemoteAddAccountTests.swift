@@ -10,9 +10,9 @@ import XCTest
 class RemoteAddAccount {
     
     private let url: URL
-    private let httpClient: HttpClientProtocol
+    private let httpClient: HttpPostClientProtocol
     
-    init(url: URL, httpClient: HttpClientProtocol) {
+    init(url: URL, httpClient: HttpPostClientProtocol) {
         self.url = url
         self.httpClient = httpClient
     }
@@ -22,13 +22,13 @@ class RemoteAddAccount {
     }
 }
 
-protocol HttpClientProtocol {
+protocol HttpPostClientProtocol {
     func post(url: URL)
 }
 
 class RemoteAddAccountTests: XCTestCase {
-
-    func test_() {
+    
+    func test_add_should_call_httpClient_with_correct_url() {
         let url = URL(string: "http://any-url.com")!
         let httpClientSpy = HttpClientSpy()
         let sut = RemoteAddAccount(url: url, httpClient: httpClientSpy)
@@ -37,7 +37,7 @@ class RemoteAddAccountTests: XCTestCase {
         XCTAssertEqual(httpClientSpy.url, url)
     }
     
-    class HttpClientSpy: HttpClientProtocol {
+    class HttpClientSpy: HttpPostClientProtocol {
         
         var url: URL?
         
