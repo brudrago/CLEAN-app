@@ -31,7 +31,7 @@ protocol HttpPostClientProtocol {
 class RemoteAddAccountTests: XCTestCase {
     
     func test_add_should_call_httpClient_with_correct_url() {
-        let addAccountModel = AddAccountModel(name: "any_name", email: "any_email@mail.com", password: "any_password", passwordConfirmation: "any_password")
+        let addAccountModel = makeAddAccountModel()
         let url = URL(string: "http://any-url.com")!
         let httpClientSpy = HttpClientSpy()
         let sut = RemoteAddAccount(url: url, httpClient: httpClientSpy)
@@ -41,17 +41,22 @@ class RemoteAddAccountTests: XCTestCase {
     }
     
     func test_add_should_call_httpClient_with_correct_data() {
-        let addAccountModel = AddAccountModel(name: "any_name", email: "any_email@mail.com", password: "any_password", passwordConfirmation: "any_password")
+        let addAccountModel = makeAddAccountModel()
         let url = URL(string: "http://any-url.com")!
         let httpClientSpy = HttpClientSpy()
         let sut = RemoteAddAccount(url: url, httpClient: httpClientSpy)
         sut.add(addAccountModel: addAccountModel)
         let data = try? JSONEncoder().encode(addAccountModel)
+        
         XCTAssertEqual(httpClientSpy.data, data)
     }
 }
 
 extension RemoteAddAccountTests {
+    
+    func makeAddAccountModel() -> AddAccountModel {
+        return AddAccountModel(name: "any_name", email: "any_email@mail.com", password: "any_password", passwordConfirmation: "any_password")
+    }
    
     class HttpClientSpy: HttpPostClientProtocol {
         
