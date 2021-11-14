@@ -42,21 +42,21 @@ class RemoteAddAccountTests: XCTestCase {
         httpClientSpy.completeWithError(.noConnectivity) // O completion do SUT só irá ser chamado quando o completion do http devolver o erro
         wait(for: [exp], timeout: 1)
     }
+    //Deixei o corpo de teste diferente pra mostrar as possibilidades, pode montar com várias linhas ou usar o expect/Helper p/nao repetir código
     
-    func test_add_should_complete_with_account_if_client_completes_with_data() {
-        let addAccountModel = makeAddAccountModel()
+    func test_add_should_complete_with_account_if_client_completes_with_valid_data() {
         let expectedAccount = makeAccountModel()
         let (sut,httpClientSpy) = makeSut()
-        let exp = expectation(description: "waiting")
-        sut.add(addAccountModel: addAccountModel) { result in
-            switch result {
-            case .failure: XCTFail("Expected success received \(result) instead")
-            case .success(let receivedAccount): XCTAssertEqual(receivedAccount, expectedAccount)
-            }
-            exp.fulfill()
-        }
-        httpClientSpy.completeWithData(expectedAccount.toData()!)
-        wait(for: [exp], timeout: 1)
+        expect(sut, completeWith: .success(expectedAccount), when: {
+            httpClientSpy.completeWithData(expectedAccount.toData()!)
+        })
+    }
+    
+    func test_add_should_complete_with_error_if_client_completes_with_invalid_data() { //testa se o JSOn vier com falha
+        let (sut,httpClientSpy) = makeSut()
+        expect(sut, completeWith: .failure(.unexpected), when: {
+            httpClientSpy.completeWithData(Data("invalid_data".utf8))
+        })
     }
 }
 
@@ -67,6 +67,20 @@ extension RemoteAddAccountTests {
         let httpClientSpy = HttpClientSpy()
         let sut = RemoteAddAccount(url: url, httpClient: httpClientSpy)
         return (sut,httpClientSpy)
+    }
+    
+    func expect(_ sut: RemoteAddAccount, completeWith expectedResult: Result<AccountModel, DomainError>, when action: () -> Void) {
+        let exp = expectation(description: "waiting")
+        sut.add(addAccountModel: makeAddAccountModel()) { receivedResult in
+            switch (expectedResult, receivedResult) {
+            case (.failure(let expectedError), .failure(let receivedError)): XCTAssertEqual(expectedError, receivedError)
+            case (.success(let expectedAccount), .success(let receivedAccount)): XCTAssertEqual(expectedAccount, receivedAccount)
+            default: XCTFail("Expected \(expectedResult) received \(receivedResult) instead")
+            }
+            exp.fulfill()
+        }
+          action()
+        wait(for: [exp], timeout: 1)
     }
     
     func makeAddAccountModel() -> AddAccountModel {
