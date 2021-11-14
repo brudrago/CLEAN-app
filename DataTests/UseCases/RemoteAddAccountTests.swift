@@ -13,7 +13,7 @@ class RemoteAddAccountTests: XCTestCase {
     
     func test_add_should_call_httpClient_with_correct_url() {
         let addAccountModel = makeAddAccountModel()
-        let url = URL(string: "http://any-url.com")!
+        let url = makeUrl()
         let (sut,httpClientSpy) = makeSut(url: url)
         sut.add(addAccountModel:addAccountModel) { _ in} //passando o completion vazio pq nao precisamos dele nesse cenário de teste
         
@@ -55,7 +55,7 @@ class RemoteAddAccountTests: XCTestCase {
     func test_add_should_complete_with_error_if_client_completes_with_invalid_data() { //testa se o JSOn vier com falha
         let (sut,httpClientSpy) = makeSut()
         expect(sut, completeWith: .failure(.unexpected), when: {
-            httpClientSpy.completeWithData(Data("invalid_data".utf8))
+            httpClientSpy.completeWithData(makeInvalidData())
         })
     }
 }
@@ -81,6 +81,14 @@ extension RemoteAddAccountTests {
         }
           action()
         wait(for: [exp], timeout: 1)
+    }
+    
+    func makeInvalidData() -> Data {
+        return Data("invalid_data".utf8)
+    }
+    
+    func makeUrl() -> URL {
+        return URL(string: "http://any-url.com")!
     }
     
     func makeAddAccountModel() -> AddAccountModel {
