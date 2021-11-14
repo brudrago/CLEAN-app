@@ -70,6 +70,7 @@ class RemoteAddAccountTests: XCTestCase {
     }
 }
 
+// MARK: - RemoteAddAccountTests Extension <HELPERS>
 
 extension RemoteAddAccountTests {
     
@@ -81,18 +82,14 @@ extension RemoteAddAccountTests {
         return (sut,httpClientSpy)
     }
     
-    /// Testar Memory Leaks: - addTeardownBlock é executado depois de cada teste e antes do teardown ser chamado, fazendo assertNil na classe que estamos testando, verificamos se em algum momento temos memory leaks
+    /// Essa func implementa os passos necessários para construir os dados utilizados na maior parte dos cenários de teste.
     /// - Parameters:
-    ///   - instance: SUT, classe que estamos testando
-    ///   - file: Aponta qual teste falhou
-    ///   - line: Aponta a linha em que o teste falhou
-    func checkMemoryLeaks(for instance: AnyObject,file: StaticString = #filePath, line: UInt = #line) {
-        addTeardownBlock { [weak instance] in
-            XCTAssertNil(instance,file: file, line: line)
-        }
-    }
-    
-    func expect(_ sut: RemoteAddAccount, completeWith expectedResult: Result<AccountModel, DomainError>, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) { // file: file, line: line -> pra mostrar o erro quando o teste falhar na linha do teste e nao no switch
+    ///   - sut: Classe sendo testada
+    ///   - expectedResult: Resultado esperado
+    ///   - action: Quando deve executar
+    ///   - file: Mostra o teste que falhou -> pra mostrar o erro quando o teste falhar na linha do teste e nao no switch
+    ///   - line: Mostra a linha em que o teste falhou
+    func expect(_ sut: RemoteAddAccount, completeWith expectedResult: Result<AccountModel, DomainError>, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
         let exp = expectation(description: "waiting")
         sut.add(addAccountModel: makeAddAccountModel()) { receivedResult in
             switch (expectedResult, receivedResult) {
@@ -106,41 +103,8 @@ extension RemoteAddAccountTests {
         wait(for: [exp], timeout: 1)
     }
     
-    func makeInvalidData() -> Data {
-        return Data("invalid_data".utf8)
-    }
-    
-    func makeUrl() -> URL {
-        return URL(string: "http://any-url.com")!
-    }
-    
     func makeAddAccountModel() -> AddAccountModel {
         return AddAccountModel(name: "any_name", email: "any_email@mail.com", password: "any_password", passwordConfirmation: "any_password")
-    }
-    
-    func makeAccountModel() -> AccountModel {
-        return AccountModel(id: "any_id", name: "any_name", email: "any_email@mail.com", password: "any_password")
-    }
-    
-    class HttpClientSpy: HttpPostClientProtocol {
-        
-        var urls = [URL]() //Isso fara com que no teste seja checado o conteúdo de url e a quantidade, então se o método for chamado + de 1 vez, irá falhar
-        var data: Data?
-        var completion: ((Result<Data,HttpError>) -> Void)?
-        
-        func post(to url: URL, with data: Data?, completion: @escaping (Result<Data,HttpError>) -> Void) {
-            self.urls.append(url)
-            self.data = data
-            self.completion = completion
-        }
-        
-        func completeWithError(_ error: HttpError) {
-            completion?(.failure(error))
-        }
-        
-        func completeWithData(_ data: Data) {
-            completion?(.success(data))
-        }
     }
 }
 
