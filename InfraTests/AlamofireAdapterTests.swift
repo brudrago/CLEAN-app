@@ -10,6 +10,12 @@ import Alamofire
 
 class UrlProtocolStub: URLProtocol {
     
+    static var emit: ((URLRequest)-> Void)?
+    
+    static func observeRequest(completion: @escaping (URLRequest)-> Void) {
+        UrlProtocolStub.emit = completion
+    }
+    
     override open class func canInit(with request: URLRequest) -> Bool {
         return true
     }
@@ -19,7 +25,7 @@ class UrlProtocolStub: URLProtocol {
     }
     
     override open func startLoading() {
-        
+        UrlProtocolStub.emit?(request)
     }
     
     override open func stopLoading() {}
@@ -34,12 +40,12 @@ class AlamofireAdapter {
     }
     
     func post(to url: URL) {
-        
+        session.request(url, method: .post).resume()
     }
 }
 
 class AlamofireAdapterTests: XCTestCase {
-
+    //testando se o alamofire esta sendo chamado com a url correta e utilizando o método post
     func test_() {
         let url = makeUrl()
         let configuration = URLSessionConfiguration.default
@@ -47,5 +53,12 @@ class AlamofireAdapterTests: XCTestCase {
         let session = Session(configuration: configuration)
         let sut = AlamofireAdapter(session: session)
         sut.post(to: url)
+        let exp = expectation(description: "waiting")
+        UrlProtocolStub.observeRequest { request in
+            XCTAssertEqual(url, request.url)
+            XCTAssertEqual("POST", request.httpMethod)
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
     }
 }
