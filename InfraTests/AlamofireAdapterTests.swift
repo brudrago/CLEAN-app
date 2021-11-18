@@ -8,6 +8,7 @@
 import XCTest
 import Alamofire
 
+//Não depende de nenhum framwork , vamos interceptar as chamadas
 class UrlProtocolStub: URLProtocol {
     
     static var emit: ((URLRequest)-> Void)?
@@ -46,7 +47,7 @@ class AlamofireAdapter {
 
 class AlamofireAdapterTests: XCTestCase {
     //testando se o alamofire esta sendo chamado com a url correta e utilizando o método post
-    func test_() {
+    func test_post_should_make_request_with_valid_url_and_method() {
         let url = makeUrl()
         let configuration = URLSessionConfiguration.default
         configuration.protocolClasses = [UrlProtocolStub.self]
@@ -54,6 +55,7 @@ class AlamofireAdapterTests: XCTestCase {
         let sut = AlamofireAdapter(session: session)
         sut.post(to: url)
         let exp = expectation(description: "waiting")
+        //precisamos fazer esse observe pq o teste é assíncrono,e como nao estamos injetando o stub como uma dependencia do Adapter,precisamos capturar o valor que queremos testar
         UrlProtocolStub.observeRequest { request in
             XCTAssertEqual(url, request.url)
             XCTAssertEqual("POST", request.httpMethod)
