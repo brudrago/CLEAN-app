@@ -50,10 +50,7 @@ class AlamofireAdapterTests: XCTestCase {
     //testando se o alamofire esta sendo chamado com a url correta e utilizando o método post
     func test_post_should_make_request_with_valid_url_and_method() {
         let url = makeUrl()
-        let configuration = URLSessionConfiguration.default
-        configuration.protocolClasses = [UrlProtocolStub.self]
-        let session = Session(configuration: configuration)
-        let sut = AlamofireAdapter(session: session)
+        let sut = makeSut()
         sut.post(to: url, with: makeValidData())
         let exp = expectation(description: "waiting")
         //precisamos fazer esse observe pq o teste é assíncrono,e como nao estamos injetando o stub como uma dependencia do Adapter,precisamos capturar o valor que queremos testar
@@ -68,10 +65,7 @@ class AlamofireAdapterTests: XCTestCase {
     
     func test_post_should_make_request_with_no_data() {
         let url = makeUrl()
-        let configuration = URLSessionConfiguration.default
-        configuration.protocolClasses = [UrlProtocolStub.self]
-        let session = Session(configuration: configuration)
-        let sut = AlamofireAdapter(session: session)
+        let sut = makeSut()
         sut.post(to: url, with: nil)
         let exp = expectation(description: "waiting")
         UrlProtocolStub.observeRequest { request in
@@ -79,5 +73,15 @@ class AlamofireAdapterTests: XCTestCase {
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1)
+    }
+}
+
+extension AlamofireAdapterTests {
+    
+    func makeSut() -> AlamofireAdapter {
+        let configuration = URLSessionConfiguration.default
+        configuration.protocolClasses = [UrlProtocolStub.self]
+        let session = Session(configuration: configuration)
+        return AlamofireAdapter(session: session)
     }
 }
